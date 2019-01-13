@@ -1,4 +1,4 @@
-from flask import Flask, render_template, Response, request, jsonify
+from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 import requests
 
@@ -12,6 +12,10 @@ def symbols_mapper(symbol_obj):
         new_key = key.split()[-1]
         result[new_key] = symbol_obj[key]
     return result
+
+def preprocess_name(name):
+    name = [part for part in name.split() if not '.' in part]
+    return '_'.join(name)
 
 @app.route('/')
 def index():
@@ -29,16 +33,16 @@ def symbols_autocomplete():
     symbols['bestMatches'] = [symbols_mapper(symbol) for symbol in symbols['bestMatches']]
     return jsonify(symbols)
 
-@app.route('/quote')
-def last_day_quote():
-    if not 'symbol' in request.args:
+@app.route('/company')
+def company_data():
+    if 'name' not in request.args or 'symbol' not in request.args:
         return 'Bad request'
 
+    name = preprocess_name(request.args['name'])
     symbol = request.args['symbol']
-    return Response(
-        requests.get(f'https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol={symbol}&interval=5min&apikey={api_key}'),
-        mimetype='application/json'
-    )
+    quote_data = requests.get(f'https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol={symbol}&interval=5min&apikey={api_key}').json()
+    company_data = requests.get(f'https://autocomplete.clearbit.com/v1/companies/suggest?query={name}').json()
+    return jsonify({ 'quote_data': quote_data, 'company_data': company_data })
 
 if __name__ == '__main__':
     app.run()
