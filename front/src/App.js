@@ -11,6 +11,19 @@ import './__styles__/App.css';
 class App extends Component {
   state = { autocompleteData: [], cache: {}, companyData: {}, quoteData: {}, loading: false }
 
+  componentDidMount() {
+    window.addEventListener('keydown', this.keyDownHandler);
+  }
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.keyDownHandler);
+  }
+
+  keyDownHandler = (e) => {
+    if (e.code === 'Escape') {
+      this.setState({ autocompleteData: [] });
+    }
+  }
+
   updateAutocomplete = throttle(async (symbol) => {
     const response = await fetch(`http://localhost:5000/symbols?symbol=${symbol}`);
     const data = await response.json();
@@ -24,11 +37,15 @@ class App extends Component {
     const name = symbolData.name;
     const response = await fetch(`http://localhost:5000/company?symbol=${symbol}&name=${name}`);
     const data = await response.json();
-    this.setState({ companyData: data.company_data[0], quoteData: data.quote_data, loading: false });
+    this.setState({
+      companyData: { ...data.company_data[0], ...symbolData },
+      quoteData: data.quote_data, loading: false
+    }
+    );
   }
 
   render() {
-    const { autocompleteData, loading } = this.state;
+    const { autocompleteData, loading, quoteData, companyData } = this.state;
     return (
       <Grid>
         <Row>
@@ -41,7 +58,12 @@ class App extends Component {
           </Col>
         </Row>
         <Row>
-          {loading ? <Loader /> : <CompanyDetails />}
+          <Col xs={10}>
+            {loading ?
+              <Loader /> :
+              <CompanyDetails companyData={companyData} quoteData={quoteData} />
+            }
+          </Col>
         </Row>
       </Grid>
     );

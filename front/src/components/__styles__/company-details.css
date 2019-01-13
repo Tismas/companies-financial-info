@@ -1,0 +1,16 @@
+.company-data-container {
+  margin: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  font-size: 20px;
+}
+.company-data-info {
+  text-align: center;
+}
+.company-data-info-label {
+  font-weight: bold;
+}
+.company-data-info-value {
+  font-size: 18px;
+}
