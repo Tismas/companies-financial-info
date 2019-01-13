@@ -13,7 +13,7 @@ const chartLines = [
 const Info = (props) => (
   <div className="company-data-info">
     <div className="company-data-info-label">{props.label}</div>
-    <div className="company-data-info-value">{props.value}</div>
+    <div className="company-data-info-value">{props.value || 'None'}</div>
   </div>
 )
 
