@@ -24,6 +24,8 @@ def symbols_autocomplete():
 
     symbol = request.args['symbol']
     symbols = requests.get(f'https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords={symbol}&apikey={api_key}').json()
+    if not 'bestMatches' in symbols:
+        return jsonify({ 'bestMatches': [] })
     symbols['bestMatches'] = [symbols_mapper(symbol) for symbol in symbols['bestMatches']]
     return jsonify(symbols)
 
