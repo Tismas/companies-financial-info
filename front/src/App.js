@@ -11,17 +11,8 @@ import './__styles__/App.css';
 class App extends Component {
   state = { autocompleteData: [], cache: {}, companyData: {}, quoteData: {}, loading: false }
 
-  componentDidMount() {
-    window.addEventListener('keydown', this.keyDownHandler);
-  }
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.keyDownHandler);
-  }
-
-  keyDownHandler = (e) => {
-    if (e.code === 'Escape') {
-      this.setState({ autocompleteData: [] });
-    }
+  hideAutocompleteList = () => {
+    this.setState({ autocompleteData: [] });
   }
 
   updateAutocomplete = throttle(async (symbol) => {
@@ -54,6 +45,7 @@ class App extends Component {
               autocompleteData={autocompleteData}
               updateAutocomplete={this.updateAutocomplete}
               handleSelection={this.handleSelection}
+              hideAutocompleteList={this.hideAutocompleteList}
             />
           </Col>
         </Row>
