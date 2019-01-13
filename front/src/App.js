@@ -3,12 +3,13 @@ import { Grid, Row, Col } from 'react-bootstrap';
 import { throttle } from 'lodash';
 
 import Autocomplete from './components/Autocomplete';
+import CompanyDetails from './components/CompanyDetails';
 import Loader from './components/Loader';
 
 import './__styles__/App.css';
 
 class App extends Component {
-  state = { autocompleteData: [], cache: {}, companyData: {}, loading: false }
+  state = { autocompleteData: [], cache: {}, companyData: {}, quoteData: {}, loading: false }
 
   updateAutocomplete = throttle(async (symbol) => {
     const response = await fetch(`http://localhost:5000/symbols?symbol=${symbol}`);
@@ -20,9 +21,10 @@ class App extends Component {
     this.setState({ autocompleteData: [], loading: true });
 
     const symbol = symbolData.symbol;
-    const response = await fetch(`http://localhost:5000/quote?symbol=${symbol}`);
+    const name = symbolData.name;
+    const response = await fetch(`http://localhost:5000/company?symbol=${symbol}&name=${name}`);
     const data = await response.json();
-    this.setState({ companyData: data, loading: false });
+    this.setState({ companyData: data.company_data[0], quoteData: data.quote_data, loading: false });
   }
 
   render() {
@@ -39,7 +41,7 @@ class App extends Component {
           </Col>
         </Row>
         <Row>
-          {loading ? <Loader /> : 'loaded'}
+          {loading ? <Loader /> : <CompanyDetails />}
         </Row>
       </Grid>
     );
