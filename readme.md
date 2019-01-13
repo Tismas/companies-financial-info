@@ -3,4 +3,4 @@
 > cd front && yarn && yarn build
 ### And install backend dependencies and run flask app(optionally create your venv before installing dependencies)
 > cd ../backend && pip install -r requirements.txt && python run.py
-## Then app will be available on localhost:5000
+### Then app will be available on localhost:5000
