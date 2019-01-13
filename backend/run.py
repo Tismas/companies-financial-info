@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 import requests
 
-api_key = '8g327gr4b3t9137t4b'
+api_key = 'TA12U6P8JPBF71G2'
 app = Flask(__name__, template_folder='../front/build', static_folder='../front/build/static', static_url_path='/static')
 CORS(app)
 
@@ -40,7 +40,7 @@ def company_data():
 
     name = preprocess_name(request.args['name'])
     symbol = request.args['symbol']
-    quote_data = requests.get(f'https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol={symbol}&interval=5min&apikey={api_key}').json()
+    quote_data = requests.get(f'https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol={symbol}&interval=5min&apikey={api_key}').json()['Time Series (5min)']
     company_data = requests.get(f'https://autocomplete.clearbit.com/v1/companies/suggest?query={name}').json()
     return jsonify({ 'quote_data': quote_data, 'company_data': company_data })
 
